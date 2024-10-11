@@ -1,0 +1,39 @@
+---
+- name: Configure Debian 12 System
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install sudo
+      apt:
+        name: sudo
+        state: present
+
+    - name: Add user to sudo list
+      user:
+        name: hugo
+        groups: sudo
+        append: yes
+
+    - name: Install ifconfig
+      apt:
+        name: net-tools
+        state: present
+
+    - name: Change hostname
+      hostname:
+        name: your_new_hostname
+
+    - name: Change root password
+      user:
+        name: root
+        password: "{{ 'new_root_password' | password_hash('sha512') }}"
+
+    - name: Change hugo user password
+      user:
+        name: hugo
+        password: "{{ 'new_hugo_password' | password_hash('sha512') }}"
